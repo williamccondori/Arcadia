@@ -4,10 +4,10 @@
   </q-page>
 </template>
 
-<script lang="ts">
+<script>
 import Arcadia from 'components/Arcadia.vue';
 export default {
   name: 'Index',
-  components: { Arcadia }
-}
+  components: { Arcadia },
+};
 </script>

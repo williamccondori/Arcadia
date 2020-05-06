@@ -72,7 +72,9 @@ module.exports = configure(function(ctx) {
         'QExpansionItem',
         'QImg',
         'QSeparator',
-        'QRating'
+        'QRating',
+        'QScrollArea',
+        'QAvatar'
       ],
 
       directives: ['Ripple'],
