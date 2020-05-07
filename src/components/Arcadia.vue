@@ -37,70 +37,108 @@
               elevated
               :width="400"
             >
-              <section class="q-pa-md">
-                <q-input
-                  filled
-                  v-model="search"
-                  placeholder="Buscar lugares, capas, objetos"
-                  @input="searchLocation"
-                  :loading="searchLoading"
-                >
-                  <template v-slot:prepend>
-                    <q-icon name="search" />
-                  </template>
-                </q-input>
-                <div v-if="search">
-                  <div class="q-mt-md q-mb-md">
-                    <span class="text-subtitle1">Lugares</span>
-                  </div>
-                  <q-list
-                    :padding="false"
-                    v-for="suggestion in suggestions"
-                    v-bind:key="suggestion.magicKey"
+              <q-scroll-area class="fit">
+                <section class="q-pa-md">
+                  <q-input
+                    filled
+                    v-model="search"
+                    placeholder="Buscar lugares, capas, objetos"
+                    @input="searchLocation"
+                    :loading="searchLoading"
                   >
-                    <q-item
-                      clickable
-                      v-ripple
-                      @click="zoomToLocation(suggestion.magicKey)"
-                    >
-                      <q-item-section avatar>
-                        <q-avatar color="blue" icon="place" />
-                      </q-item-section>
-                      <q-item-section>{{ suggestion.text }}</q-item-section>
-                    </q-item>
-                  </q-list>
-                  <div class="q-mt-md q-mb-md">
-                    <span class="text-subtitle1">Capas</span>
+                    <template v-slot:prepend>
+                      <q-icon name="search" />
+                    </template>
+                  </q-input>
+                  <div v-if="!search">
+                    <div class="q-mt-md q-mb-md">
+                      <span class="text-subtitle1">Últimas búsquedas</span>
+                    </div>
+                    <q-list :padding="false">
+                      <q-item clickable v-ripple>
+                        <q-item-section avatar top>
+                          <q-avatar color="blue" icon="place" />
+                        </q-item-section>
+                        <q-item-section>
+                          <q-item-label lines="1">Loreto</q-item-label>
+                          <q-item-label caption>12/11/2016 12:12</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                    <q-separator class="q-mt-md"></q-separator>
+                    <div class="q-mt-md q-mb-md">
+                      <span class="text-subtitle1">Mis lugares</span>
+                    </div>
+                    <q-list :padding="false">
+                      <q-item clickable v-ripple>
+                        <q-item-section avatar top>
+                          <q-avatar color="red" icon="place" />
+                        </q-item-section>
+                        <q-item-section>
+                          <q-item-label lines="1">Loreto</q-item-label>
+                          <q-item-label caption>12/11/2016 12:12</q-item-label>
+                        </q-item-section>
+                        <q-item-section side>
+                          <q-icon color="white" name="edit" />
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
                   </div>
-                </div>
-              </section>
-            </q-drawer>
-            <q-drawer v-model="menuLayer" side="left" elevated :width="400">
-              <div class="q-pa-sm">
-                <q-card>
-                  <q-toolbar class="bg-blue text-white">
-                    <q-input
-                      class="block"
-                      dark
-                      borderless
-                      v-model="filter"
-                      placeholder="Buscar"
+                  <div v-if="search">
+                    <div class="q-mt-md q-mb-md">
+                      <span class="text-subtitle1">Lugares</span>
+                    </div>
+                    <q-list
+                      :padding="false"
+                      v-for="suggestion in suggestions"
+                      v-bind:key="suggestion.magicKey"
                     >
-                      <template v-slot:append>
-                        <q-icon v-if="!filter" name="search" />
-                      </template>
-                    </q-input>
-                  </q-toolbar>
-                  <q-card-section>
-                    <q-tree
-                      :filter="filter"
-                      :nodes="layers"
-                      node-key="label"
-                      tick-strategy="leaf"
-                    />
-                  </q-card-section>
-                </q-card>
-              </div>
+                      <q-item
+                        clickable
+                        v-ripple
+                        @click="zoomToLocation(suggestion.magicKey)"
+                      >
+                        <q-item-section avatar>
+                          <q-avatar color="blue" icon="place" />
+                        </q-item-section>
+                        <q-item-section>{{ suggestion.text }}</q-item-section>
+                      </q-item>
+                    </q-list>
+                    <div class="q-mt-md q-mb-md">
+                      <span class="text-subtitle1">Capas</span>
+                    </div>
+                  </div>
+                </section>
+              </q-scroll-area>
+            </q-drawer>
+            <q-drawer
+              v-model="menuLayer"
+              overlay
+              side="left"
+              elevated
+              :width="400"
+            >
+              <q-scroll-area class="fit">
+                <section class="q-pa-md">
+                  <q-input
+                    filled
+                    v-model="filter"
+                    placeholder="Buscar capas"
+                    @input="filter"
+                    class="q-mb-md"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="search" />
+                    </template>
+                  </q-input>
+                  <q-tree
+                    :filter="filter"
+                    :nodes="layers"
+                    node-key="label"
+                    tick-strategy="leaf"
+                  />
+                </section>
+              </q-scroll-area>
             </q-drawer>
             <q-page-container>
               <q-page>
@@ -151,7 +189,7 @@ export default {
   mounted() {
     this.map = L.map('map').setView([51.505, -0.09], 13);
     const baseLayer = L.tileLayer(
-      'https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}'
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
     );
     this.map.addLayer(baseLayer);
   },
